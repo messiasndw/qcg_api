@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+    api:
+        build: ./
+        container_name: qcg_api
+        ports: 
+            - 8000:3000
+        networks:
+            - qcg_network
+        volumes: 
+            - ./:/app
+            - /app/node_modules
+
+networks: 
+    qcg_network: 
