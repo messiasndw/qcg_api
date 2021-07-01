@@ -11,6 +11,19 @@ services:
         volumes: 
             - ./:/app
             - /app/node_modules
-
+    mongodb:
+        image: mongo
+        container_name: mongodb_qcg
+        networks: 
+            - qcg_network
+        ports: 
+            - 27027:27017
+        volumes: 
+            - mongodb_cqg_data:/data/db
+        environment: 
+            - MONGO_INITDB_ROOT_USERNAME=mongouser
+            - MONGO_INITDB_ROOT_PASSWORD=mongopassword
 networks: 
-    qcg_network: 
+    qcg_network:
+volumes: 
+    mongodb_cqg_data:

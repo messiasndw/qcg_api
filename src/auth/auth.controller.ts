@@ -9,8 +9,14 @@ export class AuthController {
     constructor(private readonly authService:AuthService){}
 
     @Post('login')
-    login(@Request() request): any{
-        return this.authService.login({name:"a", password:"b"})
+    login(@Body() requestBody): any{
+        const {email, password} = requestBody
+        return this.authService.login({email,password})
+    }
+
+    @Post('register')
+    async register(@Body() {name,email,password}){
+        return await this.authService.register({name,email,password})
     }
 
     @UseGuards(JwtAuthGuard)
