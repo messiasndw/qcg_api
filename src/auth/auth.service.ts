@@ -2,13 +2,18 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
+import { CompaniesService } from 'src/companies/companies.service';
+import { Connection, Model, startSession } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 @Injectable()
 
 export class AuthService {
 
     constructor(
+        @InjectConnection() private connection: Connection,
         private usersService: UsersService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private companiesService: CompaniesService
     ) { }
 
     async validateUser(credentials): Promise<any> {
@@ -21,15 +26,20 @@ export class AuthService {
     }
 
     async register(user) {
-        return await this.usersService.create(user)
+        const session = await this.connection.startSession()
+        const {companyName, name, password, email} = user
+        await session.withTransaction(async (): Promise<any>  => {
+            const company = await this.companiesService.create({name: companyName})
+            await this.usersService.create({company, password, email, name})
+        })
+        return {message: 'Registration completed!'}
     }
 
     async login(credentials) {
-
-        const { id, name } = await this.validateUser(credentials)
-
+        const {email, name, password, companyName} = credentials
+        const { id } = await this.validateUser({email,password})
         return {
-            access_token: this.jwtService.sign({ id, name }),
+            access_token: this.jwtService.sign({ id }),
         };
 
     }

@@ -6,15 +6,25 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { DesksController } from './desks/desks.controller';
+import { DesksModule } from './desks/desks.module';
+import { KeysService } from './keys/keys.service';
+import { KeysModule } from './keys/keys.module';
+import { DatabaseModule } from './database/database.module';
+import { CompaniesModule } from './companies/companies.module';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    UsersModule,
     AuthModule,
-    MongooseModule.forRoot(process.env.DB_CONNECTION_STRING)],
-  controllers: [AppController, UsersController],
+    MongooseModule.forRoot(process.env.DB_CONNECTION_STRING),
+    UsersModule,
+    DesksModule,
+    KeysModule,
+    CompaniesModule,
+    ],
+  controllers: [],
   providers: [AppService],
 })
 

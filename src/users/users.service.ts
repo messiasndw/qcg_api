@@ -4,11 +4,12 @@ import { Model } from 'mongoose';
 import { User } from './users.model'
 import * as bcrypt from 'bcrypt'
 
-
 @Injectable()
 export class UsersService {
 
-    constructor(@InjectModel('User') private readonly userModel: Model<User>) { }
+    constructor(
+        @InjectModel('User') private readonly userModel: Model<User>,
+    ) { }
 
     async findByEmail(email: string): Promise<any | undefined> {
         // const x = this.userModel.create

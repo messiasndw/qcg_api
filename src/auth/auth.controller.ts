@@ -6,22 +6,22 @@ import { AuthUser } from 'src/users/user.decorator';
 @Controller('auth')
 export class AuthController {
 
-    constructor(private readonly authService:AuthService){}
+    constructor(private readonly authService: AuthService) { }
 
     @Post('login')
-    login(@Body() requestBody): any{
-        const {email, password} = requestBody
-        return this.authService.login({email,password})
+    login(@Body() requestBody): any {
+        const { email, password } = requestBody
+        return this.authService.login({ email, password })
     }
 
     @Post('register')
-    async register(@Body() {name,email,password}){
-        return await this.authService.register({name,email,password})
+    async register(@Body() { name, email, password, companyName }) {
+        return await this.authService.register({ name, email, password, companyName })
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('profile')
-    profile(@AuthUser() user): any{
+    profile(@AuthUser() user): any {
         return user
     }
 
