@@ -2,6 +2,7 @@ import * as mongoose from "mongoose";
 
 export const UserSchema = new mongoose.Schema({
     name: String,
+    surename: String,
     email: String,
     password: String,
     active: {type: Boolean, default: 0},
@@ -10,6 +11,7 @@ export const UserSchema = new mongoose.Schema({
 
 export interface User{
     name: string,
+    surename: string,
     email: string,
     password: string,
     company: object

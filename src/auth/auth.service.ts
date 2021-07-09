@@ -27,10 +27,10 @@ export class AuthService {
 
     async register(user) {
         const session = await this.connection.startSession()
-        const {companyName, name, password, email} = user
+        const {companyName, name, surename, password, email} = user
         await session.withTransaction(async (): Promise<any>  => {
             const company = await this.companiesService.create({name: companyName})
-            await this.usersService.create({company, password, email, name})
+            await this.usersService.create({company, password, email, name, surename})
         })
         return {message: 'Registration completed!'}
     }

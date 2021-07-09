@@ -12,6 +12,7 @@ import { KeysService } from './keys/keys.service';
 import { KeysModule } from './keys/keys.module';
 import { DatabaseModule } from './database/database.module';
 import { CompaniesModule } from './companies/companies.module';
+import { EventsModule } from './events/events.module';
 
 
 @Module({
@@ -23,6 +24,7 @@ import { CompaniesModule } from './companies/companies.module';
     DesksModule,
     KeysModule,
     CompaniesModule,
+    EventsModule,
     ],
   controllers: [],
   providers: [AppService],
