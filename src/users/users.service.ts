@@ -13,28 +13,37 @@ export class UsersService {
     ) { }
 
     async findByEmail(email: string): Promise<any | undefined> {
-        return await this.userModel.findOne({email})
+        return await this.userModel.findOne({ email })
     }
-
 
     async create(user: User): Promise<any | undefined> {
         const { password, ...rest } = user
         const hashedPassword = await bcrypt.hash(password, 10)
         await this.userModel.create({ ...rest, password: hashedPassword })
-        return {message: 'New user created successfully!'}
+        return { message: 'New user created successfully!' }
     }
 
-    async me(id){
+    async me(id) {
         return await this.userModel.findById(id);
     }
 
-    async updateProfile(userId,fields){
+    async updateProfile(userId, fields) {
         if (fields.password) {
             fields.password = await bcrypt.hash(fields.password, 10)
 
         }
-        const updatedData = await this.userModel.findByIdAndUpdate({_id:userId},{...fields})
-        return {updatedData, message: 'Profile Updated!'}
+        const updatedData = await this.userModel.findByIdAndUpdate({ _id: userId }, { ...fields })
+        return { updatedData, message: 'Profile Updated!' }
+    }
+
+    async find(filter) {
+        const { name, surename, email } = filter
+        const user = {
+            name: { $regex: name || '', $options: 'i' },
+            email: { $regex: email || '', $options: 'i' },
+            'company.name':'MESSIASNDW'
+        }
+        return await this.userModel.find({ ...user })
     }
 
 }

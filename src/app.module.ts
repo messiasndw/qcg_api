@@ -18,12 +18,12 @@ import { EventsModule } from './events/events.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    AuthModule,
     MongooseModule.forRoot(process.env.DB_CONNECTION_STRING),
+    CompaniesModule,
     UsersModule,
+    AuthModule,
     DesksModule,
     KeysModule,
-    CompaniesModule,
     EventsModule,
     ],
   controllers: [],

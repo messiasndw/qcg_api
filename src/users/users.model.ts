@@ -5,14 +5,16 @@ export const UserSchema = new mongoose.Schema({
     surename: String,
     email: String,
     password: String,
-    active: {type: Boolean, default: 0},
-    company: {type: {name: String, _id: String, createdAt: Date, updatedAt: Date}, default: null}
-},{timestamps: true})
+    active: { type: Boolean, default: 0 },
+    photo: { type: String, default: null },
+    company: { type: { name: String, _id: String, createdAt: Date, updatedAt: Date }, default: null }
+}, { timestamps: true })
 
-export interface User{
+export interface User {
     name: string,
     surename: string,
     email: string,
     password: string,
-    company: object
+    company: object,
+    photo: string
 }

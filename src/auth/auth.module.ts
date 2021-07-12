@@ -7,13 +7,14 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { CompaniesModule } from 'src/companies/companies.module';
 import { EventsModule } from 'src/events/events.module';
+import { KeysModule } from 'src/keys/keys.module';
 
 @Module({
   imports: [
     UsersModule,
+    CompaniesModule,
     EventsModule,
     PassportModule,
-    CompaniesModule,
     JwtModule.register({
       secret: "APP_SECRET",
       signOptions: { expiresIn: '1d' },
