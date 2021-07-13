@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './users.model'
 import * as bcrypt from 'bcrypt'
-import { AuthUser } from './user.decorator';
+import { CreateUsersDto } from './dto/create.users.dto';
+import { GetMeDto } from './dto/get.me.dto';
+import { GetUsersDto } from './dto/get.users.dto';
+import { UpdateUsersProfileDto } from './dto/update.users.profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,34 +19,48 @@ export class UsersService {
         return await this.userModel.findOne({ email })
     }
 
-    async create(user: User): Promise<any | undefined> {
+    async create(user : CreateUsersDto): Promise<any | undefined> {
         const { password, ...rest } = user
         const hashedPassword = await bcrypt.hash(password, 10)
-        await this.userModel.create({ ...rest, password: hashedPassword })
-        return { message: 'New user created successfully!' }
+        const newUser = (await this.userModel.create({ ...rest, password: hashedPassword })).toJSON()
+        newUser.id = newUser._id
+        delete newUser._id
+        delete newUser.password
+        delete newUser.__v
+        return { message: 'New user created successfully!', user: newUser}
+
     }
 
-    async me(id) {
-        return await this.userModel.findById(id);
+    async me(id: GetMeDto) {
+        const me = (await this.userModel.findById(id)).toJSON();
+        me.id = me._id
+        delete me._id
+        return me
     }
 
-    async updateProfile(userId, fields) {
-        if (fields.password) {
-            fields.password = await bcrypt.hash(fields.password, 10)
-
+    async updateProfile(user : UpdateUsersProfileDto) {
+        if (user.password) {
+            user.password = await bcrypt.hash(user.password, 10)
         }
-        const updatedData = await this.userModel.findByIdAndUpdate({ _id: userId }, { ...fields })
-        return { updatedData, message: 'Profile Updated!' }
+        const updatedData = await this.userModel.updateOne({ _id: user.id }, { ...user })
+        return {message: 'Profile Updated!' }
     }
 
-    async find(filter) {
+    async getUsers(filter: GetUsersDto) {
         const { name, surename, email } = filter
         const user = {
             name: { $regex: name || '', $options: 'i' },
+            surename: { $regex: surename || '', $options: 'i' },
             email: { $regex: email || '', $options: 'i' },
-            'company.name':'MESSIASNDW'
+            'company.name': 'MESSIASNDW'
         }
-        return await this.userModel.find({ ...user })
+        const users = await this.userModel.find().exec()
+        return users.map((user) => {
+            const userJson = user.toJSON()
+            userJson.id = user._id
+            delete userJson._id
+            return {...userJson}
+        })
     }
 
 }

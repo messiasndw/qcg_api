@@ -1,7 +1,10 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthUserDto } from 'src/auth/dto/auth.user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-guard.guard';
+import { CreateUsersDto } from 'src/users/dto/create.users.dto';
+import { GetUsersDto } from 'src/users/dto/get.users.dto';
 import { AuthUser } from 'src/users/user.decorator';
-import { CompaniesService } from '../services/companies.service';
+import { User } from 'src/users/users.model';
 import { CompaniesUsersService } from '../services/companies.users.service';
 
 @Controller('company/users')
@@ -13,13 +16,12 @@ export class CompaniesUsersController {
     ) { }
 
     @Get()
-    async index(@Req() request){
-        return await this.companiesUsersService.index(request)
+    async getUsers(@Req() filter: GetUsersDto): Promise<User[]> {
+        return await this.companiesUsersService.getUsers(filter)
     }
 
     @Post()
-    async store(@Body() requestBody, @AuthUser() authUser) {
-        const {user} = requestBody
+    async create(@Body() user : CreateUsersDto, @AuthUser() authUser: AuthUserDto) {
         return await this.companiesUsersService.create(user,authUser)
     }
 

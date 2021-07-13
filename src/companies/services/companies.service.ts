@@ -12,7 +12,10 @@ export class CompaniesService {
     ){}
 
     async create({name}){
-        return await this.companyModel.create({name})
+        const company = (await this.companyModel.create({name})).toJSON()
+        company.id = company._id
+        delete company._id
+        return company
     }
 
 
