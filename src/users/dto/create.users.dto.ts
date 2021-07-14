@@ -7,7 +7,6 @@ export class CreateUsersDto{
     name: string
 
     @IsNotEmpty()
-    @IsEmail()
     surename: string
 
     @IsNotEmpty()

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, UseGuards, Body, Req, Request } from '@nestjs/common';
+import { Controller, Post, Get, UseGuards, Body, Req, Request, HttpCode} from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-guard.guard';
 import { AuthService } from './auth.service';
 import { AuthUser } from 'src/users/user.decorator';
@@ -16,13 +16,6 @@ export class AuthController {
         return this.authService.login({ email, password })
     }
 
-    @Post('asas')
-    asas(@Body() requestBody): any {
-        const { email, password } = requestBody
-        this.eventsService.server.emit('call','enviando call asas')
-        return 'a'
-    }
-
     @Post('register')
     async register(@Body() { name, surename, email, password, companyName }) {
         
@@ -37,6 +30,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Post('me')
+    @HttpCode(200)
     me(@AuthUser() user): any {
         return user
     }
