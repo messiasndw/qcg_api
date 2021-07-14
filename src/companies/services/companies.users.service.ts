@@ -6,26 +6,24 @@ import { CreateUsersDto } from 'src/users/dto/create.users.dto';
 import { GetUsersDto } from 'src/users/dto/get.users.dto';
 import { User } from 'src/users/users.model';
 import { UsersService } from 'src/users/users.service';
-import { Company } from '../companies.model';
+import {  Company, CompanyDocument } from '../companies.model';
 
 @Injectable()
 export class CompaniesUsersService {
 
     constructor(
-        @InjectModel('Company') private readonly companyModel: Model<Company>,
+        @InjectModel(Company.name) private readonly companyModel: Model<CompanyDocument>,
         private readonly usersService: UsersService
     ) { }
 
-    async getUsers(filter: GetUsersDto): Promise<User[]> {
+    async getUsers(filter: GetUsersDto): Promise<any> {
         return await this.usersService.getUsers(filter)
     }
 
     async create(user : CreateUsersDto, authUser: AuthUserDto){
-        const {company, name, surename, id, email} = authUser
         const newUserByCompany = {
             ...user,
-            company: company,
-            createdBy: {name, surename, id, email} 
+            company: authUser.company.id,
         }
         return await this.usersService.create(newUserByCompany)
     }

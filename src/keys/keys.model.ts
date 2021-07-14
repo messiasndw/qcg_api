@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose'
+import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 
 const mongooseTypes = mongoose.Types
 
@@ -14,4 +15,3 @@ export interface Key {
     company: {},
     user: {},
 }
-

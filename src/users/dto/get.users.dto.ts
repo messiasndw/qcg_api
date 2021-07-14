@@ -3,4 +3,5 @@ export class GetUsersDto {
     surename?: string
     email?: string
     active?: boolean
+    company?: string
 }

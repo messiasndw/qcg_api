@@ -1,23 +1,33 @@
 import * as mongoose from "mongoose";
+import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Company } from "src/companies/companies.model";
 
-export const UserSchema = new mongoose.Schema({
-    name: String,
-    surename: String,
-    email: String,
-    password: {type: String, select: false},
-    active: { type: Boolean, default: 0 },
-    photo: { type: String, default: null },
-    company: { type: { name: String, _id: String, createdAt: Date, updatedAt: Date }, default: null },
-    createdBy: {type: {}, default: null},
-    __v: {type: Number, select: false}
-}, { timestamps: true, id: true })
-export interface User {
-    id: string,
-    name: string,
-    surename: string,
-    email: string,
-    password: string,
-    company: object,
-    photo?: string,
-    createdBy?: {}
+export type UserDocument = User & mongoose.Document
+@Schema({ toJSON: { virtuals: true, versionKey: false}, timestamps: true, })
+export class User {
+    @Prop()
+    name: string;
+
+    @Prop()
+    surename: string;
+
+    @Prop()
+    email: string;
+
+    @Prop({select: false})
+    password: string;
+
+    @Prop({ default: false })
+    active: boolean;
+
+    @Prop({ default: null })
+    photo: string;
+
+    @Prop({ default: null, select: true, type: mongoose.Types.ObjectId , ref: 'Company'})
+    company: string
+
+    @Prop({default: null, type: {}})
+    createdBy: {}
 }
+
+export const UserSchema = SchemaFactory.createForClass(User)

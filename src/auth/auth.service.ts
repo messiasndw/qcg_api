@@ -18,9 +18,9 @@ export class AuthService {
 
     async validateUser(credentials): Promise<any> {
         const { email, password } = credentials
-        const user = await this.usersService.findByEmail(email)
+        const user = await this.usersService.findUserByEmail(email)
         if (user) {
-            if (await bcrypt.compare(password, user.password)) return user
+            if (await bcrypt.compare(password, user.password)) return user.toJSON()
         }
         throw new UnauthorizedException('Incorrect email or password')
     }
@@ -30,7 +30,7 @@ export class AuthService {
         const {companyName, name, surename, password, email} = user
         await session.withTransaction(async (): Promise<any>  => {
             const company = await this.companiesService.create({name: companyName})
-            await this.usersService.create({company, password, email, name, surename})
+            await this.usersService.create({company: company.id, password, email, name, surename})
         })
         return {message: 'Registration completed!'}
     }

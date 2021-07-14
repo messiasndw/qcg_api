@@ -1,4 +1,4 @@
-import { Company } from "src/companies/companies.model"
+import { CompanyDocument } from "src/companies/companies.model"
 
 export class AuthUserDto{
     id: string
@@ -6,7 +6,7 @@ export class AuthUserDto{
     surename: string
     email: string
     password: string
-    company: Company
+    company: CompanyDocument
     photo: string
     createdBy: {}
 }
