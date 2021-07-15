@@ -40,15 +40,42 @@ export class UsersService {
     }
 
     async getUsers(filter: GetUsersDto) {
-        const { name, surename, email, company } = filter
+
+        const PAGE_SIZE = 10
+        const { name, surename, email, company, active, page } = filter
+        const skip = (page == '1' ? 0 : (parseInt(page)-1)* PAGE_SIZE)
+        
+        // FILTER QUERY
         const customFilter = {
             name: { $regex: name || '', $options: 'i' },
             surename: { $regex: surename || '', $options: 'i' },
             email: { $regex: email || '', $options: 'i' },
-            company
+            company,
+            active
         }
-        const users =  await this.userModel.find({...customFilter}).populate('company')
-        return {message: `${users.length} users found`, data: users}
+
+        //REMOVING UNDEFINED AND NULL VALUES FROM THE FILTER
+        for (const key in customFilter) {
+            if (customFilter[key] === undefined || customFilter === null) {
+                delete customFilter[key]
+            }
+        }
+
+        const users =  await this.userModel.find({...customFilter})
+        .populate('company')
+        .limit(PAGE_SIZE)
+        .skip(skip)
+        const total = await this.userModel.count({...customFilter})
+        
+        return {message: `${users.length} users fetched for page ${page}`, data: users, total:total.toString(), page}
+    }
+
+    async updateUser(fields){
+        if (fields.password) {
+            fields.password = await bcrypt.hash(fields.password, 10)
+        }
+        const updatedData = await this.userModel.updateOne({ _id: fields.id }, { ...fields })
+        const me = await this.me(fields.id)
     }
 
 }

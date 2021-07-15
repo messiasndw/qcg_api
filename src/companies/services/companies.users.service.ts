@@ -28,5 +28,9 @@ export class CompaniesUsersService {
         return await this.usersService.create(newUserByCompany)
     }
 
+    async updateUser(fields){
+        return await this.usersService.updateUser(fields)
+    }
+
 
 }

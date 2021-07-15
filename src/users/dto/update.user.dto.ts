@@ -1,6 +1,6 @@
 import { IsIn, IsOptional, IsString } from "class-validator"
 
-export class GetUsersDto {
+export class UpdateUserDto {
     
     @IsOptional()
     @IsString()
@@ -18,6 +18,4 @@ export class GetUsersDto {
     active?: boolean
 
     company: string
-
-    page: string
 }
