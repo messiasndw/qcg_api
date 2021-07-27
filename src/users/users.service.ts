@@ -69,6 +69,11 @@ export class UsersService {
         
         return {message: `${users.length} users fetched for page ${page}`, data: users, total:total.toString(), page}
     }
+    
+    async getAllUsers(companyId: string){
+        const data = await this.userModel.find({company:companyId})
+        return {message: 'All users', data}
+    }
 
     async updateUser(fields){
         if (fields.password) {
@@ -76,6 +81,21 @@ export class UsersService {
         }
         const updatedData = await this.userModel.updateOne({ _id: fields.id }, { ...fields })
         const me = await this.me(fields.id)
+    }
+
+    async deleteDesk(desk){
+        const {id, users} = desk
+        console.log("passou delete")
+        console.log(users)
+        return await this.userModel.updateMany({_id: {$in: users}},{$pull: {desks: id}})
+    }
+
+    async pushDesk(desk){
+        const {id, users} = desk
+        console.log("tem")
+        console.log({id,users})
+        console.log("tem_")
+        return await this.userModel.updateMany({_id: {$in: users}},{$push: {desks: id}})
     }
 
 }

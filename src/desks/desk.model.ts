@@ -1,14 +1,23 @@
-import * as mongoose from 'mongoose'
+import * as mongoose from "mongoose";
+import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 
-const mongooseTypes = mongoose.Types
+export type DeskDocument = Desk & mongoose.Document
+@Schema({ toJSON: { virtuals: true, versionKey: false}, timestamps: true, })
+export class Desk {
+    @Prop()
+    code: string;
 
-export const DeskSchema = new mongoose.Schema({
-    name: String,
-    code: String,
-})
+    @Prop({ default: false })
+    active: boolean;
 
-export interface Desk {
-    name: string,
-    code: string
+    @Prop({ default: null, select: true, type: mongoose.Types.ObjectId , ref: 'Company'})
+    company: string
+
+    @Prop({ default: null, select: true, type: [] , ref: 'User'})
+    users: []
+
+    @Prop({default: null, type: {}})
+    createdBy: {}
 }
 
+export const DeskSchema = SchemaFactory.createForClass(Desk)

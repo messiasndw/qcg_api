@@ -28,6 +28,9 @@ export class User {
 
     @Prop({default: null, type: {}})
     createdBy: {}
+
+    @Prop({default: [], type: [], ref: 'Desk'})
+    desks: []
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

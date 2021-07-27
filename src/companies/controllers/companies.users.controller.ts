@@ -25,6 +25,11 @@ export class CompaniesUsersController {
         return await this.companiesUsersService.getUsers({...filter, company: authUser.company.id})
     }
 
+    @Get('all')
+    async getAll(@AuthUser() authUser: AuthUserDto){
+        return await this.companiesUsersService.getAllUsers(authUser.company.id)
+    }
+
     @Put(':id')
     async updateUser(@Param('id') id: string, @Body() fields : UpdateUserDto, @AuthUser() authUser: AuthUserDto) {
         return await this.companiesUsersService.updateUser({...fields, id})

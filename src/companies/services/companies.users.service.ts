@@ -32,5 +32,8 @@ export class CompaniesUsersService {
         return await this.usersService.updateUser(fields)
     }
 
+    async getAllUsers(companyId: string){
+        return await this.usersService.getAllUsers(companyId)
+    }
 
 }
