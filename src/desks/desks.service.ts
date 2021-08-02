@@ -21,7 +21,7 @@ export class DesksService {
         return { message: 'New desk created successfully!', data }
     }
 
-    async getDesks(fields: GetDesksDto) {
+    async getPaginated(fields: GetDesksDto) {
 
         const PAGE_SIZE = 10
         const page = fields.page ? fields.page : 1
@@ -69,6 +69,21 @@ export class DesksService {
 
         })
         return { message: "Desk updated sucessfully!", data: updatedDesk, newUsers,removedUsers}
+    }
+
+    async getAll(companyId){
+        const desks = await this.deskModel.find({company:companyId})
+        return {message: `${desks.length} desks found!`, data: desks}
+    }
+
+    async removeDepartment(data){
+        const {desks, id} = data
+        await this.deskModel.updateMany({id:{$in:desks}},{$pull:{departments:id}})
+    }
+
+    async pushDepartment(data){
+        const {desks, id} = data
+        await this.deskModel.updateMany({id:{$in:desks}},{$push:{departments:id}})
     }
 
 

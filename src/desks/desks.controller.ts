@@ -18,7 +18,7 @@ export class DesksController {
 
     @Get()
     async getDesks(@Query() request: GetDesksRequest, @AuthUser() authUser: AuthUserDto){
-      return this.deskService.getDesks({...request,company: authUser.company.id,})
+      return this.deskService.getPaginated({...request,company: authUser.company.id,})
     }
 
     @Put(':id')
@@ -33,6 +33,11 @@ export class DesksController {
     async updateUsers(@Param('id') id: string, @Body() request, @AuthUser() authUser: AuthUserDto){
       return this.deskService.updateUsers({id,company: authUser.company, users: request.users})
       // return this.deskService.updateUsers({...request,company: authUser.company.id,})
+    }
+
+    @Get('all')
+    async getAll(@AuthUser() authUser: AuthUserDto){
+      return await this.deskService.getAll(authUser.company.id)
     }
 
 }

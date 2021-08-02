@@ -13,8 +13,11 @@ export class Desk {
     @Prop({ default: null, select: true, type: mongoose.Types.ObjectId , ref: 'Company'})
     company: string
 
-    @Prop({ default: null, select: true, type: [] , ref: 'User'})
+    @Prop({ default: [], select: true, type: [] , ref: 'User'})
     users: []
+
+    @Prop({ default: [], select: true, type: [] , ref: 'Department'})
+    departments: []
 
     @Prop({default: null, type: {}})
     createdBy: {}
