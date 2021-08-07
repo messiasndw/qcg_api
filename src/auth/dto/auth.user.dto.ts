@@ -9,4 +9,5 @@ export class AuthUserDto{
     company: CompanyDocument
     photo: string
     createdBy: {}
+    createdAt: string
 }

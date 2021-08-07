@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Query, Put, MessageEvent, Post, Res, Param, UseGuards, HttpCode } from '@nestjs/common';
+import { Body, Controller, Get, Query, Put, Delete, Post, Res, Param, UseGuards, HttpCode } from '@nestjs/common';
 import { AuthUserDto } from 'src/auth/dto/auth.user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-guard.guard';
 import { AuthUser } from 'src/users/user.decorator';
@@ -28,11 +28,21 @@ export class DesksController {
       // return this.deskService.updateUsers({...request,company: authUser.company.id,})
     }
 
-    @Post('users/:id')
-    @HttpCode(200)
+    @Put('users/:id')
     async updateUsers(@Param('id') id: string, @Body() request, @AuthUser() authUser: AuthUserDto){
       return this.deskService.updateUsers({id,company: authUser.company, users: request.users})
       // return this.deskService.updateUsers({...request,company: authUser.company.id,})
+    }
+
+    @Put('departments/:id')
+    async updateDepartments(@Param('id') id: string, @Body() request, @AuthUser() authUser: AuthUserDto){
+      return this.deskService.updateDepartments({id,company: authUser.company, departments: request.data})
+      // return this.deskService.updateUsers({...request,company: authUser.company.id,})
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: string){
+        return await this.deskService.destroy(id)
     }
 
     @Get('all')

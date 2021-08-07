@@ -34,3 +34,7 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
+
+UserSchema.pre('deleteOne',{ document: true, query: false }, async function(next) {
+    await this.model('Desk').updateMany({_id:{$in:this['desks'] as keyof UserDocument}},{$pull: {users: this._id.toString()}})
+})

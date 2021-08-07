@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
+import { Department, DepartmentDocument } from 'src/departments/department.model';
 import { UsersService } from 'src/users/users.service';
 import { Helper } from 'src/util/Helper';
 import { Desk, DeskDocument } from './desk.model';
 import { CreateDeskDto } from './dto/create.desk.dto';
 import { GetDesksDto } from './dto/get.desks.dto';
+import { UpdateDepartmentsDto } from './dto/update.departments.dto';
 import { UpdateDeskUsersDto } from './dto/update.users.dto';
 
 @Injectable()
@@ -13,6 +15,7 @@ export class DesksService {
 
     constructor(
         @InjectModel(Desk.name) private readonly deskModel: Model<DeskDocument>,
+        @InjectModel(Department.name) private readonly departmentModel: Model<DepartmentDocument>,
         @InjectConnection() private readonly connection: Connection,
         private readonly usersService: UsersService) { }
 
@@ -30,7 +33,11 @@ export class DesksService {
         const filter = {
             code: { $regex: fields.code || '', $options: 'i' },
             company: fields.company,
-            active: fields.active
+            active: fields.active,
+            createdAt: {
+                $gte: fields.createdAtInitial ? new Date(fields.createdAtInitial) : new Date('01-01-2000'),
+                $lte: fields.createdAtEnd ? new Date(new Date(fields.createdAtEnd).setHours(23,59,59)) : new Date(new Date().setHours(23,59,59))
+            }
         }
 
         Helper.removeUndefined(filter)
@@ -71,20 +78,37 @@ export class DesksService {
         return { message: "Desk updated sucessfully!", data: updatedDesk, newUsers,removedUsers}
     }
 
-    async getAll(companyId){
+    async updateDepartments(desk: UpdateDepartmentsDto) {
+        const { id, departments } = desk
+        let updatedDesk
+        let newData = []
+        let removedData = []
+        const session = await this.connection.startSession()
+        await session.withTransaction(async (): Promise<any> => {
+
+            const foundDesk = await this.deskModel.findById(id)
+
+            newData = departments.filter(department => (!foundDesk.departments.includes(department)))
+            removedData = foundDesk.departments.filter((department) => (!departments.includes(department)))
+
+            foundDesk.departments = departments
+            updatedDesk = await foundDesk.save()
+            
+            if(newData.length) await this.departmentModel.updateMany({_id:{$in: newData}},{$push:{desks: id}})
+            if(removedData.length) await this.departmentModel.updateMany({_id:{$in: removedData}},{$pull:{desks: id}})
+
+        })
+        return { message: "Desk updated sucessfully!", data: updatedDesk, newData,removedData}
+    }
+
+    async getAll(companyId: string){
         const desks = await this.deskModel.find({company:companyId})
         return {message: `${desks.length} desks found!`, data: desks}
     }
 
-    async removeDepartment(data){
-        const {desks, id} = data
-        await this.deskModel.updateMany({id:{$in:desks}},{$pull:{departments:id}})
+    async destroy(id){
+        const desk = await this.deskModel.findOne({_id: id})
+        await desk.deleteOne()
+        return {message: 'Desk deleted successfully!', data: desk}
     }
-
-    async pushDepartment(data){
-        const {desks, id} = data
-        await this.deskModel.updateMany({id:{$in:desks}},{$push:{departments:id}})
-    }
-
-
 }

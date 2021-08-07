@@ -13,8 +13,8 @@ export class KeysController {
     @UseGuards(JwtAuthGuard)
     @Post('store')
     async store(@Body() requestBody: any, @AuthUser() authUser){
-        const {departmentId} = requestBody
-        return await this.keysService.create({departmentId,authUser})
+        const {department} = requestBody
+        return await this.keysService.create({departmentId: department,authUser})
     }
 
 

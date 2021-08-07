@@ -24,3 +24,8 @@ export class Desk {
 }
 
 export const DeskSchema = SchemaFactory.createForClass(Desk)
+
+DeskSchema.pre('deleteOne',{ document: true, query: false }, async function(next) {
+    await this.model('Department').updateMany({_id:{$in:this['departments'] as keyof DeskDocument}},{$pull: {desks: this._id.toString()}})
+    await this.model('User').updateMany({_id:{$in:this['users'] as keyof DeskDocument}},{$pull: {desks: this._id.toString()}})
+})

@@ -16,6 +16,10 @@ export class DepartmentsService {
         @InjectModel(Desk.name) private readonly deskModel: Model<DeskDocument>
     ){}
 
+    async getDepartment(id: string){
+        return await this.departmentModel.findById(id).populate('desks')
+    }
+
     async store(department: CreateDepartmentDto){
         const {company, name} = department
         return await this.departmentModel.create({company,name})
@@ -79,6 +83,11 @@ export class DepartmentsService {
         const department = await this.departmentModel.findOne({_id: id})
         await department.deleteOne()
         return {message: 'Department deleted successfully!', data: department}
+    }
+
+    async getAll(companyId: string){
+        const departments = await this.departmentModel.find({company: companyId})
+        return {message: `${departments.length} departments found!`, data: departments}
     }
     
 

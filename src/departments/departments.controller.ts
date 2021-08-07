@@ -28,7 +28,7 @@ export class DepartmentsController {
         return await this.departmentsService.update({fields: {...request}, id})
     }
 
-    @Post('desks/:id')
+    @Put('desks/:id')
     async updateDesks(@Param('id') id: string, @Body() request){
         const {data} = request
         return await this.departmentsService.updateDesks({id,desks: data})
@@ -37,5 +37,10 @@ export class DepartmentsController {
     @Delete(':id')
     async delete(@Param('id') id:string){
         return await this.departmentsService.destroy(id)
+    }
+
+    @Get('all')
+    async getAll(@AuthUser() authUser: AuthUserDto){
+        return await this.departmentsService.getAll(authUser.company.id)
     }
 }

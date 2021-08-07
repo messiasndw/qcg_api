@@ -10,5 +10,13 @@ export class GetDesksRequest{
     active: boolean
 
     @IsOptional()
+    @IsString()
+    createdAtInitial: string
+
+    @IsOptional()
+    @IsString()
+    createdAtEnd: string
+
+    @IsOptional()
     page: number
 }
